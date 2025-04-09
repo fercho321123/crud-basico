@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD de Estudiantes</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        form {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background-color: #3498db;
+            color: white;
+            font-weight: 600;
+        }
+        
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        
+        .action-btn {
+            margin-right: 5px;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .edit-btn {
+            background-color: #f39c12;
+            color: white;
+        }
+        
+        .delete-btn {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+        }
+        
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        .message {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+        }
+        
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Sistema de Gestión de Estudiantes</h1>
+    
+    <div id="message" class="message hidden"></div>
+    
+    <form id="studentForm">
+        <input type="hidden" id="studentId">
+        <div class="form-group">
+            <label for="nombre">Nombre Completo:</label>
+            <input type="text" id="nombre" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="edad">Edad:</label>
+            <input type="number" id="edad" min="1" max="120" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="correo">Correo Electrónico:</label>
+            <input type="email" id="correo" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="grado">Grado:</label>
+            <select id="grado" required>
+                <option value="">Seleccione un grado</option>
+                <option value="1° Primaria">1° Primaria</option>
+                <option value="2° Primaria">2° Primaria</option>
+                <option value="3° Primaria">3° Primaria</option>
+                <option value="4° Primaria">4° Primaria</option>
+                <option value="5° Primaria">5° Primaria</option>
+                <option value="6° Primaria">6° Primaria</option>
+                <option value="1° Secundaria">1° Secundaria</option>
+                <option value="2° Secundaria">2° Secundaria</option>
+                <option value="3° Secundaria">3° Secundaria</option>
+                <option value="4° Secundaria">4° Secundaria</option>
+                <option value="5° Secundaria">5° Secundaria</option>
+                <option value="Universidad">Universidad</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="promedio">Promedio:</label>
+            <input type="number" id="promedio" min="0" max="10" step="0.1" required>
+        </div>
+        
+        <div class="action-buttons">
+            <button type="submit" id="saveBtn">Guardar Estudiante</button>
+            <button type="button" id="cancelBtn" class="hidden">Cancelar</button>
+            <button type="button" id="clearBtn">Limpiar Formulario</button>
+        </div>
+    </form>
+    
+    <h2>Lista de Estudiantes</h2>
+    <table id="studentTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Edad</th>
+                <th>Correo</th>
+                <th>Grado</th>
+                <th>Promedio</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="studentList">
+            <tr>
+                <td colspan="7" class="no-data">No hay estudiantes registrados</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        // Variables globales
+        let students = [];
+        let isEditing = false;
+        let currentId = 1;
+        
+        // Elementos del DOM
+        const studentForm = document.getElementById('studentForm');
+        const studentList = document.getElementById('studentList');
+        const saveBtn = document.getElementById('saveBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const messageDiv = document.getElementById('message');
+        const studentIdInput = document.getElementById('studentId');
+        
+        // Campos del formulario
+        const nameInput = document.getElementById('nombre');
+        const ageInput = document.getElementById('edad');
+        const emailInput = document.getElementById('correo');
+        const gradeInput = document.getElementById('grado');
+        const averageInput = document.getElementById('promedio');
+        
+        // Función para cargar estudiantes desde el localStorage
+        function loadStudents() {
+            const savedStudents = localStorage.getItem('students');
+            if (savedStudents) {
+                students = JSON.parse(savedStudents);
+                // Encontrar el ID más alto para continuar desde ahí
+                if (students.length > 0) {
+                    const maxId = Math.max(...students.map(student => student.id));
+                    currentId = maxId + 1;
+                }
+            }
+            displayStudents();
+        }
+        
+        // Función para guardar estudiantes en el localStorage
+        function saveStudents() {
+            localStorage.setItem('students', JSON.stringify(students));
+        }
+        
+        // Función para mostrar estudiantes en la tabla
+        function displayStudents() {
+            if (students.length === 0) {
+                studentList.innerHTML = '<tr><td colspan="7" class="no-data">No hay estudiantes registrados</td></tr>';
+                return;
+            }
+            
+            studentList.innerHTML = '';
+            students.forEach(student => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${student.id}</td>
+                    <td>${student.nombre}</td>
+                    <td>${student.edad}</td>
+                    <td>${student.correo}</td>
+                    <td>${student.grado}</td>
+                    <td>${student.promedio}</td>
+                    <td>
+                        <button class="action-btn edit-btn" onclick="editStudent(${student.id})">Editar</button>
+                        <button class="action-btn delete-btn" onclick="deleteStudent(${student.id})">Eliminar</button>
+                    </td>
+                `;
+                studentList.appendChild(row);
+            });
+        }
+        
+        // Función para limpiar el formulario
+        function clearForm() {
+            studentForm.reset();
+            studentIdInput.value = '';
+            isEditing = false;
+            saveBtn.textContent = 'Guardar Estudiante';
+            cancelBtn.classList.add('hidden');
+        }
+        
+        // Función para mostrar mensajes
+        function showMessage(text, type) {
+            messageDiv.textContent = text;
+            messageDiv.className = `message ${type}`;
+            setTimeout(() => {
+                messageDiv.className = 'message hidden';
+            }, 3000);
+        }
+        
+        // Función para añadir o actualizar un estudiante
+        function saveStudent(e) {
+            e.preventDefault();
+            
+            const student = {
+                nombre: nameInput.value,
+                edad: parseInt(ageInput.value),
+                correo: emailInput.value,
+                grado: gradeInput.value,
+                promedio: parseFloat(averageInput.value)
+            };
+            
+            if (isEditing) {
+                // Actualizar estudiante existente
+                const id = parseInt(studentIdInput.value);
+                const index = students.findIndex(s => s.id === id);
+                if (index !== -1) {
+                    student.id = id;
+                    students[index] = student;
+                    showMessage('Estudiante actualizado correctamente', 'success');
+                }
+            } else {
+                // Añadir nuevo estudiante
+                student.id = currentId++;
+                students.push(student);
+                showMessage('Estudiante registrado correctamente', 'success');
+            }
+            
+            saveStudents();
+            displayStudents();
+            clearForm();
+        }
+        
+        // Función para editar un estudiante
+        function editStudent(id) {
+            const student = students.find(s => s.id === id);
+            if (student) {
+                nameInput.value = student.nombre;
+                ageInput.value = student.edad;
+                emailInput.value = student.correo;
+                gradeInput.value = student.grado;
+                averageInput.value = student.promedio;
+                studentIdInput.value = student.id;
+                
+                isEditing = true;
+                saveBtn.textContent = 'Actualizar Estudiante';
+                cancelBtn.classList.remove('hidden');
+            }
+        }
+        
+        // Función para eliminar un estudiante
+        function deleteStudent(id) {
+            if (confirm('¿Estás seguro de eliminar este estudiante?')) {
+                students = students.filter(s => s.id !== id);
+                saveStudents();
+                displayStudents();
+                showMessage('Estudiante eliminado correctamente', 'success');
+            }
+        }
+        
+        // Event Listeners
+        studentForm.addEventListener('submit', saveStudent);
+        clearBtn.addEventListener('click', clearForm);
+        cancelBtn.addEventListener('click', clearForm);
+        
+        // Cargar estudiantes al iniciar la página
+        window.addEventListener('DOMContentLoaded', loadStudents);
+    </script>
+</body>
+</html>
